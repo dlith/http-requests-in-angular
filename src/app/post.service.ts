@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { Post } from "./post.mode";
 
@@ -7,6 +8,7 @@ import { Post } from "./post.mode";
 export class PostService {
 
     private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/posts.json';
+    error = new Subject<string>;
 
     constructor(private http: HttpClient){}
 
@@ -14,7 +16,9 @@ export class PostService {
       const postData: Post = {title: title, content: content};
       this.http.post<{name: string}>(this.BASE_URL,  postData)
       .subscribe(responseDate=>{
-      console.log(responseDate);
+        console.log(responseDate);
+      }, error => {
+        this.error.next(error.message);
       });
     }
 
