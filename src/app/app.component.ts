@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,15 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPost() {
-    this.http.get(this.BASE_URL + 'posts.json').subscribe(posts=>{
+    this.http.get(this.BASE_URL + 'posts.json').pipe(map(responseDate=>{
+      const postsArray =  [];
+      for(const key in responseDate){
+        if(responseDate.hasOwnProperty(key)){
+          postsArray.push({ ...responseDate[key], id: key});
+        }
+      }
+      return postsArray;
+    })).subscribe(posts=>{
       console.log(posts);
     });
   }
