@@ -6,20 +6,20 @@ import { Post } from "./post.mode";
 @Injectable({providedIn: 'root'})
 export class PostService {
 
-    private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/';
+    private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/posts.json';
 
     constructor(private http: HttpClient){}
 
     createAndStorePost(title: string, content: string){
       const postData: Post = {title: title, content: content};
-      this.http.post<{name: string}>(this.BASE_URL + 'posts.json',  postData)
+      this.http.post<{name: string}>(this.BASE_URL,  postData)
       .subscribe(responseDate=>{
       console.log(responseDate);
       });
     }
 
     fetchPosts(){
-      return this.http.get<{[key: string]: Post}>(this.BASE_URL + 'posts.json')
+      return this.http.get<{[key: string]: Post}>(this.BASE_URL)
       .pipe(
         map((responseDate)=>{
         const postsArray: Post[] =  [];
@@ -30,5 +30,9 @@ export class PostService {
         }
           return postsArray;
         }));
+    }
+
+    clearPosts(){
+      return this.http.delete(this.BASE_URL);
     }
 }
