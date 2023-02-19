@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Post } from './post.mode';
+import { PostService } from './post.service';
 
 @Component({
   selector: 'app-root',
@@ -11,20 +11,16 @@ import { Post } from './post.mode';
 export class AppComponent implements OnInit {
   loadedPosts: Post[] = [];
   isFetching = false;
-  private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postService: PostService) {}
 
   ngOnInit() {
-    this.fetchPost();
+    this.postService.fetchPosts();
   }
 
   onCreatePost(postData: Post) {
     // Send Http request
-    this.http.post<{name: string}>(this.BASE_URL + 'posts.json',  postData)
-    .subscribe(responseDate=>{
-      console.log(responseDate);
-    });
+    this.postService.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
@@ -38,18 +34,6 @@ export class AppComponent implements OnInit {
 
   private fetchPost() {
     this.isFetching = true;
-    this.http.get<{[key: string]: Post}>(this.BASE_URL + 'posts.json').pipe(map((responseDate)=>{
-      const postsArray: Post[] =  [];
-      for(const key in responseDate){
-        if(responseDate.hasOwnProperty(key)){
-          postsArray.push({ ...responseDate[key], id: key});
-        }
-      }
-      return postsArray;
-    })).subscribe(posts=>{
-      //console.log(posts);
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    });
+    this.postService.fetchPosts();
   }
 }
