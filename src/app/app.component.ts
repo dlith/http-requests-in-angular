@@ -9,7 +9,7 @@ import { Post } from './post.mode';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  loadedPosts = [];
+  loadedPosts: Post[] = [];
   private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/';
 
   constructor(private http: HttpClient) {}
@@ -45,7 +45,8 @@ export class AppComponent implements OnInit {
       }
       return postsArray;
     })).subscribe(posts=>{
-      console.log(posts);
+      //console.log(posts);
+      this.loadedPosts = posts;
     });
   }
 }
