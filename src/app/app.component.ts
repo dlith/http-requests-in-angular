@@ -10,6 +10,7 @@ import { Post } from './post.mode';
 })
 export class AppComponent implements OnInit {
   loadedPosts: Post[] = [];
+  isFetching = false;
   private readonly BASE_URL = 'https://ng-complete-guide-4b80d-default-rtdb.europe-west1.firebasedatabase.app/';
 
   constructor(private http: HttpClient) {}
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPost() {
+    this.isFetching = true;
     this.http.get<{[key: string]: Post}>(this.BASE_URL + 'posts.json').pipe(map((responseDate)=>{
       const postsArray: Post[] =  [];
       for(const key in responseDate){
@@ -46,6 +48,7 @@ export class AppComponent implements OnInit {
       return postsArray;
     })).subscribe(posts=>{
       //console.log(posts);
+      this.isFetching = false;
       this.loadedPosts = posts;
     });
   }
