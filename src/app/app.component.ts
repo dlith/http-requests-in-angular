@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Post } from './post.mode';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +18,9 @@ export class AppComponent implements OnInit {
     this.fetchPost();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
-    this.http.post(this.BASE_URL + 'posts.json',  postData)
+    this.http.post<{name: string}>(this.BASE_URL + 'posts.json',  postData)
     .subscribe(responseDate=>{
       console.log(responseDate);
     });
@@ -35,8 +36,8 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPost() {
-    this.http.get(this.BASE_URL + 'posts.json').pipe(map(responseDate=>{
-      const postsArray =  [];
+    this.http.get<{[key: string]: Post}>(this.BASE_URL + 'posts.json').pipe(map((responseDate)=>{
+      const postsArray: Post[] =  [];
       for(const key in responseDate){
         if(responseDate.hasOwnProperty(key)){
           postsArray.push({ ...responseDate[key], id: key});
